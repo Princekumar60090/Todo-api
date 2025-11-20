@@ -4,7 +4,7 @@ let currentUser = null;
 let authToken = null;
 
 // --- API CONFIGURATION ---
-const API_BASE_URL = 'https://todo-api-backend-e3mg.onrender.com';
+const API_BASE_URL = 'https://todo-api-backend-e3mg.onrender.com/';
 
 // --- UI ELEMENTS ---
 const authView = document.getElementById('auth-view');
@@ -243,3 +243,4 @@ todoList.addEventListener('click', (e) => {
 // Start with the authentication view
 
 showView('auth');
+
