@@ -4,7 +4,7 @@ let currentUser = null;
 let authToken = null;
 
 // --- API CONFIGURATION ---
-const API_BASE_URL = 'https://todo-api-backend-e3mg.onrender.com/';
+const API_BASE_URL = 'https://todo-api-backend-e3mg.onrender.com';
 
 // --- UI ELEMENTS ---
 const authView = document.getElementById('auth-view');
@@ -84,12 +84,14 @@ async function register(username, password) {
 
 async function login(username, password) {
     try {
+        console.log(username,password);
         // Create the Basic Auth token
         const token = 'Basic ' + btoa(`${username}:${password}`);
         // Test the token by trying to fetch todos
         const response = await fetch(`${API_BASE_URL}/todos`, {
             headers: { 'Authorization': token }
         });
+        console.log(response);
         if (!response.ok) throw new Error('Login failed. Please check your username and password.');
 
         // If successful, save the state
@@ -243,4 +245,5 @@ todoList.addEventListener('click', (e) => {
 // Start with the authentication view
 
 showView('auth');
+
 
