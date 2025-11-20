@@ -19,23 +19,32 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     /**
-     * This is the new, centralized CORS configuration.
-     * It allows requests from your frontend's origin (localhost:63342),
-     * permits all standard HTTP methods, and allows all headers.
+     * FIXED CORS CONFIGURATION FOR RENDER
+     * Allows your frontend (HTML/CSS on Render) + localhost during testing
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:63342"));
+
+        // Allow these domains
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",          // local testing
+                "https://*.onrender.com",      // your frontend deployed on Render
+                "https://*.render.com"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // Important for cookies, authorization headers
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -43,12 +52,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                // V-- This line applies the global CORS settings we just defined --V
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // We still permit OPTIONS requests here for preflight checks
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/todos/**").authenticated()
