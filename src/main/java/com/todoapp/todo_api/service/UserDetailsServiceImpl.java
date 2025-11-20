@@ -4,7 +4,7 @@ import com.todoapp.todo_api.entity.User;
 import com.todoapp.todo_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService; // <-- THIS IS THE FIX
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return org.springframework.security.core.userdetails.User.builder()
                     .username(userFromDb.getUsername())
                     .password(userFromDb.getPassword())
-                    .roles()
+                    .roles("USER")   // IMPORTANT FIX
                     .build();
         }
 
